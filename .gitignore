@@ -1,0 +1,23 @@
+# Dependencies
+/node_modules
+
+# Temporary files
+/tmp
+*.tmp
+*.swp
+*.swo
+
+# Log files
+*.log
+
+# Build output
+/dist
+/build
+
+# Sessions
+/sessions
+/JadiBots
+
+# Database files
+/database.json
+/storage/databases/database.json
