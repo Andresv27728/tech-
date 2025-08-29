@@ -240,7 +240,7 @@ const isOwner = isROwner || m.fromMe
 const isMods = isROwner || global.mods.map(v => v.replace(/[^0-9]/g, '') + detectwhat).includes(m.sender)
 const isPrems = isROwner || global.prems.map(v => v.replace(/[^0-9]/g, '') + detectwhat).includes(m.sender) || _user.premium == true
 
-if (m.isBaileys) return
+if (m.isBaileys && !isOwner) return
 if (opts['nyimak'])  return
 if (!isROwner && opts['self']) return
 if (opts['swonly'] && m.chat !== 'status@broadcast')  return
