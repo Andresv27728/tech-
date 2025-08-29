@@ -284,7 +284,7 @@ const isAdmin = isRAdmin || user?.admin === "admin"
 const isBotAdmin = !!bot?.admin
 
 // --- INICIO DE LA LÓGICA DE MODO PRIVADO (CORREGIDA) ---
-const settings = global.db.data.settings[this.user.jid];
+// La variable 'settings' ya ha sido declarada más arriba en el handler.
 if (settings && settings.private_mode && !isOwner) {
     const command = m.text.slice(0).trim().split(/ +/).shift().toLowerCase();
     if (m.isGroup) {
