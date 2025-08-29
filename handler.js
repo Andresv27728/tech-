@@ -183,6 +183,8 @@ if (!('delete' in chat))
 chat.delete = false
 if (!isNumber(chat.expired))
 chat.expired = 0
+if (!('group_enabled' in chat))
+chat.group_enabled = false
 } else
 global.db.data.chats[m.chat] = {
 isBanned: false,
@@ -204,6 +206,7 @@ nsfw: false,
 expired: 0, 
 antiLag: false,
 per: [],
+group_enabled: false,
 }
 var settings = global.db.data.settings[this.user.jid]
 if (typeof settings !== 'object') global.db.data.settings[this.user.jid] = {}
@@ -213,13 +216,17 @@ if (!('restrict' in settings)) settings.restrict = true
 if (!('jadibotmd' in settings)) settings.jadibotmd = true
 if (!('antiPrivate' in settings)) settings.antiPrivate = false
 if (!('autoread' in settings)) settings.autoread = false
+if (!('private_mode' in settings)) settings.private_mode = true
+if (!('authorized_users' in settings)) settings.authorized_users = []
 } else global.db.data.settings[this.user.jid] = {
 self: false,
 restrict: true,
 jadibotmd: true,
 antiPrivate: false,
 autoread: false,
-status: 0
+status: 0,
+private_mode: true,
+authorized_users: [],
 }
 } catch (e) {
 console.error(e)
@@ -275,6 +282,25 @@ const bot = participants.find(p => p.id === botLid || p.id === botJid) || {}
 const isRAdmin = user?.admin === "superadmin"
 const isAdmin = isRAdmin || user?.admin === "admin"
 const isBotAdmin = !!bot?.admin
+
+// --- INICIO DE LA LÓGICA DE MODO PRIVADO (CORREGIDA) ---
+const settings = global.db.data.settings[this.user.jid];
+if (settings && settings.private_mode && !isOwner) {
+    const command = m.text.slice(0).trim().split(/ +/).shift().toLowerCase();
+    if (m.isGroup) {
+        const chat = global.db.data.chats[m.chat];
+        // Si el grupo no está habilitado, solo permitir el comando +grupo
+        if (!chat.group_enabled && command !== '+grupo') {
+            return; // Bloquear todos los demás comandos
+        }
+    } else { // Si es un chat privado
+        // Si el usuario no está autorizado, solo permitir el comando +priv
+        if (!settings.authorized_users.includes(m.sender) && command !== '+priv') {
+            return; // Bloquear todos los demás comandos
+        }
+    }
+}
+// --- FIN DE LA LÓGICA DE MODO PRIVADO (CORREGIDA) ---
 
 const ___dirname = path.join(path.dirname(fileURLToPath(import.meta.url)), './plugins')
 
