@@ -1,9 +1,4 @@
-let handler = async (m, { conn, isOwner, isAdmin }) => {
-    if (!m.text) return;
-
-    const text = m.text.toLowerCase().trim();
-    const [command, ...args] = text.split(' ');
-
+let handler = async (m, { conn, command, text, usedPrefix, isOwner, isAdmin }) => {
     let settings = global.db.data.settings[conn.user.jid];
     if (!settings) settings = global.db.data.settings[conn.user.jid] = {};
 
@@ -61,10 +56,9 @@ let handler = async (m, { conn, isOwner, isAdmin }) => {
 
         case 'privatemode':
             if (!isOwner) {
-                // Silently ignore if not owner to prevent spam
-                return;
+                return m.reply('Este comando solo puede ser usado por el propietario del bot.');
             }
-            const arg = args[0];
+            const arg = text.toLowerCase().trim();
             if (arg === 'on') {
                 settings.private_mode = true;
                 m.reply('✅ El modo privado ha sido activado.');
@@ -72,14 +66,14 @@ let handler = async (m, { conn, isOwner, isAdmin }) => {
                 settings.private_mode = false;
                 m.reply('❌ El modo privado ha sido desactivado. El bot ahora responderá en todos los chats.');
             } else {
-                m.reply(`Uso incorrecto. Ejemplo: privatemode on|off`);
+                m.reply(`Uso incorrecto. Ejemplo: ${usedPrefix}privatemode on|off`);
             }
             break;
     }
 };
 
-// This property makes the handler run for every message
-handler.all = true;
+handler.command = ['+priv', '-priv', '+grupo', '-grupo', 'privatemode'];
+handler.help = ['+priv', '-priv', '+grupo', '-grupo', 'privatemode'];
+handler.tags = ['owner', 'group', 'private']; // Add appropriate tags
 
-// Set to default export to be compatible with the plugin loader
 export default handler;

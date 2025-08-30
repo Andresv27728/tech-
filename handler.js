@@ -372,6 +372,12 @@ args = args || []
 let _args = noPrefix.trim().split` `.slice(1)
 let text = _args.join` `
 command = (command || '').toLowerCase()
+
+// Re-attach prefix for specific commands
+if (['+', '-'].includes(usedPrefix)) {
+    command = (usedPrefix + command).toLowerCase();
+}
+
 let fail = plugin.fail || global.dfail
 let isAccept = plugin.command instanceof RegExp ? 
 plugin.command.test(command) :
